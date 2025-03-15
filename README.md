@@ -1,0 +1,1 @@
+A Spring Boot microservice that manages customer orders for an eCommerce platform. This service exposes RESTful APIs to place orders, fetch orders, and update order status, integrating with a mock Commerce Tools API and securing communication with JWT Authentication.
