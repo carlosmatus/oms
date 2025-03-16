@@ -1,13 +1,14 @@
 package com.demo.oms.dto;
 
 import java.math.BigDecimal;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 public class OrderRequest {
 
-    @NotNull(message = "Customer ID cannot be null")
+    public static final String CUSTOMER_ID_CANNOT_BE_NULL = "Customer ID cannot be null";
+    public static final String PRODUCT_ID_CANNOT_BE_NULL = "Product ID cannot be null";
+    @NotNull(message = CUSTOMER_ID_CANNOT_BE_NULL)
     private Long customerId;
-    @NotNull(message = "Product ID cannot be null")
+    @NotNull(message = PRODUCT_ID_CANNOT_BE_NULL)
     private Long productId;
     private Integer quantity;
     private BigDecimal price;

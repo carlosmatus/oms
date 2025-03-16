@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * ProductDetails represents product information fetched from CommerceTools.
+ * ProductDetails represents product information
  */
 public class ProductDetails {
 

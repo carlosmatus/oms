@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,11 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    /**
+     * Create orders
+     * @param orderRequest
+     * @return ResponseEntity ie 201
+     */
     @PostMapping
     public ResponseEntity<Order> placeOrder(@RequestBody OrderRequest orderRequest) {
         logger.info("Received order request: {}", orderRequest);
@@ -45,6 +51,11 @@ public class OrderController {
         return ResponseEntity.status(201).body(savedOrder);
     }
 
+    /**
+     * Retrieve orders by order ID
+     * @param orderId
+     * @return ResponseEntity
+     */
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
         logger.debug("Fetching order by ID: {}", orderId);
@@ -54,6 +65,12 @@ public class OrderController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Update order status "Pending"+→+"Shipped"+→+"Delivered"
+     * @param orderId
+     * @param status
+     * @return
+     */
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long orderId, @Valid @RequestBody OrderStatus status) {
         logger.info("Updating order status for orderId: {} to status: {}", orderId, status);
@@ -64,11 +81,30 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
+    /**
+     * Get Order by Customer Id
+     * @param customerId
+     * @return ResponseEntity i.e 200
+     */
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Order>> getOrdersByCustomerId(@PathVariable Long customerId) {
         logger.debug("Fetching orders for customerId: {}", customerId);
         List<Order> orders = orderService.getOrdersByCustomerId(customerId);
         logger.info("Found {} orders for customerId: {}", orders.size(), customerId);
         return ResponseEntity.ok(orders);
+    }
+    /**
+     * Get orders by status (e.g., PENDING, SHIPPED)
+     */
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Order>> getOrdersByStatus(@PathVariable OrderStatus status) {
+        List<Order> orders = orderService.getOrdersByStatus(status);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+    @GetMapping("/customer/{customerId}/status/{status}")
+    public ResponseEntity<List<Order>> getOrdersByCustomerIdAndStatus(
+            @PathVariable Long customerId, @PathVariable OrderStatus status) {
+        List<Order> orders = orderService.getOrdersByCustomerIdAndStatus(customerId, status);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 }

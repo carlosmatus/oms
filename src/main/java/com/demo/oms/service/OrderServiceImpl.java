@@ -2,6 +2,7 @@ package com.demo.oms.service;
 
 import com.demo.oms.dto.OrderStatusUpdateRequest;
 import com.demo.oms.entity.Order;
+import com.demo.oms.entity.OrderStatus;
 import  com.demo.oms.exception.InvalidOrderException;
 import  com.demo.oms.exception.OrderNotFoundException;
 import com.demo.oms.repository.OrderRepository;
@@ -30,7 +31,6 @@ public class OrderServiceImpl implements OrderService {
         this.orderRepository = orderRepository;
         this.commerceToolService = commerceToolService;
     }
-
     @Override
     public Order placeOrder(Order order) {
         logger.debug("Checking product availability for productId: {}", order.getProductId());
@@ -46,7 +46,22 @@ public class OrderServiceImpl implements OrderService {
         return savedOrder;
 
     }
+    /**
+     * Get all orders by status (PENDING, SHIPPED, etc.)
+     */
+    @Override
+    @Cacheable(value = "orderStatus", key = "#orderStatusId")
+    public List<Order> getOrdersByStatus(OrderStatus status) {
+        return orderRepository.findByStatus(status);
+    }
 
+    /**
+     * Get orders for a specific customer with a specific status
+     */
+    @Override
+    public List<Order> getOrdersByCustomerIdAndStatus(Long customerId, OrderStatus status) {
+        return orderRepository.findByCustomerIdAndStatus(customerId, status);
+    }
     @Override
     @Cacheable(value = "orders", key = "#orderId")
     public Order getOrderById(Long orderId) {
@@ -64,6 +79,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Cacheable(value = "orderList", key = "#customerId")
     public List<Order> getOrdersByCustomerId(Long customerId) {
         return orderRepository.findByCustomerId(customerId);
     }
