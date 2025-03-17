@@ -101,41 +101,15 @@ docker build -t order-service:latest .
 docker run -d -p 8080:8080 --name order-service order-service:latest
 ```
 
-### 3. Docker Compose Example (Optional)
-Create `docker-compose.yml`:
-```yaml
-version: '3.8'
-services:
-  order-service:
-    build: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-      - redis
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/orderdb
-      - SPRING_DATASOURCE_USERNAME=admin
-      - SPRING_DATASOURCE_PASSWORD=admin123
-      - REDIS_HOST=redis
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: orders
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
+### 3. Docker postgress image
+Create `Postgress image`:
+```docker run --name oms-postgres \
+-e POSTGRES_DB=orderdb \
+-e POSTGRES_USER=admin \
+-e POSTGRES_PASSWORD=admin123 \
+-p 5432:5432 \
+-d postgres:15
 ```
-Then run:
-```bash
-docker-compose up --build
-```
-
 ---
 
 ## Database Migrations with Flyway
