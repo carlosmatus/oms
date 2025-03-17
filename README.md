@@ -157,8 +157,6 @@ src/main/resources/db/migration
 ## Security
 - Endpoints are secured with **Spring Security**.
 - **JWT Authentication** required.
-- Example token setup in `application.yml` or env variables.
-
 ---
 
 ## Example cURL Commands
